@@ -18,10 +18,11 @@ import {
   createBackendModule,
 } from '@backstage/backend-plugin-api';
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha';
-import { createAzureDevopsRunPipelineAction } from './actions/devopsRunPipeline';
-import { createAzureDevopsCreatePipelineAction } from './actions/devopsCreatePipeline';
-import { createAzureDevopsPermitPipelineAction } from './actions/devopsPermitPipeline';
+import { createAzureDevopsRunPipelineAction } from './actions/pipelines/devopsRunPipeline';
+import { createAzureDevopsCreatePipelineAction } from './actions/pipelines/devopsCreatePipeline';
+import { createAzureDevopsPermitPipelineAction } from './actions/pipelines/devopsPermitPipeline';
 import { ScmIntegrations } from '@backstage/integration';
+import { createAzureDevopsGetVariableGroupsAction } from './actions/distributed-task/variable-groups/devopsGetVariableGroups';
 
 /**
  * A backend module that registers the action into the scaffolder
@@ -42,6 +43,7 @@ export const scaffolderModule = createBackendModule({
           createAzureDevopsRunPipelineAction({ integrations }),
           createAzureDevopsCreatePipelineAction({ integrations }),
           createAzureDevopsPermitPipelineAction({ integrations }),
+          createAzureDevopsGetVariableGroupsAction({ integrations }),
         );
       },
     });

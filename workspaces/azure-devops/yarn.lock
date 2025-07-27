@@ -6731,6 +6731,7 @@ __metadata:
     "@backstage-community/plugin-azure-devops-backend": "workspace:^"
     "@backstage/cli": "npm:^0.33.0"
     "@backstage/e2e-test-utils": "npm:^0.1.1"
+    "@backstage/errors": "npm:^1.2.7"
     "@backstage/repo-tools": "npm:^0.14.0"
     "@changesets/cli": "npm:^2.27.1"
     knip: "npm:^5.27.4"

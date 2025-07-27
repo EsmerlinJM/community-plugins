@@ -1,0 +1,118 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
+kind: Template
+metadata:
+  name: get-variable-groups-example
+  title: Get Azure DevOps Variable Groups Example
+  description: Template to demonstrate retrieving and working with Azure DevOps Variable Groups
+  tags:
+    - azure-devops
+    - variable-groups
+    - configuration
+spec:
+  owner: platform-team
+  type: utility
+  parameters:
+    - title: Azure DevOps Configuration
+      required:
+        - organization
+        - project
+      properties:
+        organization:
+          title: Azure DevOps Organization
+          type: string
+          description: The name of the Azure DevOps organization
+          ui:help: 'Example: mycompany (from https://dev.azure.com/mycompany)'
+        project:
+          title: Azure DevOps Project
+          type: string
+          description: The name of the Azure DevOps project
+        host:
+          title: Azure DevOps Host
+          type: string
+          default: dev.azure.com
+          description: The Azure DevOps host (defaults to dev.azure.com)
+          ui:help: 'Use custom host for on-premise Azure DevOps instances'
+
+    - title: Variable Groups Selection
+      description: Choose how you want to retrieve variable groups
+      properties:
+        retrievalMethod:
+          title: Retrieval Method
+          type: string
+          default: all
+          enum:
+            - all
+            - byIds
+            - byName
+          enumNames:
+            - 'Get All Variable Groups'
+            - 'Get Specific Variable Groups by IDs'
+            - 'Get Variable Groups by Name'
+          description: Select how you want to retrieve the variable groups
+        variableGroupIds:
+          title: Variable Group IDs
+          type: array
+          items:
+            type: number
+          description: Specific variable group IDs (leave empty for all)
+          ui:options:
+            addLabel: Add ID
+        variableGroupName:
+          title: Variable Group Name
+          type: string
+          description: Name pattern to filter variable groups
+          ui:help: 'Only used when "Get Variable Groups by Name" is selected'
+          dependencies:
+            retrievalMethod:
+              oneOf:
+                - properties:
+                    retrievalMethod:
+                      const: byName
+
+  steps:
+    - id: getVariableGroups
+      name: Get Variable Groups
+      action: azure:distributed-task:variable-groups:get
+      input:
+        host: ${{ parameters.host }}
+        organization: ${{ parameters.organization }}
+        project: ${{ parameters.project }}
+        groupsId: ${{ parameters.retrievalMethod === 'byIds' and parameters.variableGroupIds or [] }}
+        groupName: ${{ parameters.retrievalMethod === 'byName' and parameters.variableGroupName or '' }}
+
+  output:
+    links:
+      - title: Azure DevOps Project
+        icon: cloud
+        url: https://${{ parameters.host }}/${{ parameters.organization }}/${{ parameters.project }}
+      - title: Variable Groups in Azure DevOps
+        icon: settings
+        url: https://${{ parameters.host }}/${{ parameters.organization }}/${{ parameters.project }}/_library?itemType=VariableGroups
+    
+    text:
+      - title: Variable Groups Summary
+        content: |
+          ## Variable Groups Retrieved
+
+          **Configuration:**
+          - **Organization:** `${{ parameters.organization }}`
+          - **Project:** `${{ parameters.project }}`
+          - **Retrieval Method:** ${{ parameters.retrievalMethod }}
+          - **Host:** ${{ parameters.host }}
+
+          **Results:**
+          - **Total Groups Found:** ${{ steps.getVariableGroups.output.totalCount }}
+
+          **Variable Groups Found:**
+          - ${{ steps.getVariableGroups.output.variableGroups | dump }}
+
+          ## First Variable Group: ${{ steps.getVariableGroups.output.variableGroups[0].name }}
+          - **Name:** ${{ steps.getVariableGroups.output.variableGroups[0].name }}
+          - **ID:** ${{ steps.getVariableGroups.output.variableGroups[0].id }}
+          - **Type:** ${{ steps.getVariableGroups.output.variableGroups[0].type }}
+          - **Created:** ${{ steps.getVariableGroups.output.variableGroups[0].createdOn }}
+          - **Modified:** ${{ steps.getVariableGroups.output.variableGroups[0].modifiedOn }}
+          ---
+
+          
