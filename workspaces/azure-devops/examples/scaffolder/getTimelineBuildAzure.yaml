@@ -1,0 +1,59 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
+kind: Template
+metadata:
+  name: get-timeline-groups-example
+  title: Get Azure DevOps timeline Example
+  description: Template to demonstrate retrieving and working with Azure DevOps timeline
+  tags:
+    - azure-devops
+    - configuration
+spec:
+  owner: platform-team
+  type: utility
+  parameters:
+    - title: Azure DevOps Configuration
+      required:
+        - organization
+        - project
+      properties:
+        organization:
+          title: Azure DevOps Organization
+          type: string
+          description: The name of the Azure DevOps organization
+          ui:help: 'Example: mycompany (from https://dev.azure.com/mycompany)'
+        project:
+          title: Azure DevOps Project
+          type: string
+          description: The name of the Azure DevOps project
+        host:
+          title: Azure DevOps Host
+          type: string
+          default: dev.azure.com
+          description: The Azure DevOps host (defaults to dev.azure.com)
+          ui:help: 'Use custom host for on-premise Azure DevOps instances'
+        buildId:
+          title: Azure DevOps Host
+          type: string
+          default: dev.azure.com
+          description: The Azure DevOps host (defaults to dev.azure.com)
+          ui:help: 'Use custom host for on-premise Azure DevOps instances'
+
+  steps:
+    - id: getTimeline
+      name: Get Timeline
+      action: azure:build:timeline:get
+      input:
+        host: ${{ parameters.host }}
+        organization: ${{ parameters.organization }}
+        project: ${{ parameters.project }}
+        buildId: '1'
+
+  output:
+    links:
+      - title: Azure DevOps Project
+        icon: cloud
+        url: https://${{ parameters.host }}/${{ parameters.organization }}/${{ parameters.project }}
+      
+
+          

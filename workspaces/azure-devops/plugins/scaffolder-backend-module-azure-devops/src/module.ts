@@ -23,6 +23,7 @@ import { createAzureDevopsCreatePipelineAction } from './actions/pipelines/devop
 import { createAzureDevopsPermitPipelineAction } from './actions/pipelines/devopsPermitPipeline';
 import { ScmIntegrations } from '@backstage/integration';
 import { createAzureDevopsGetVariableGroupsAction } from './actions/distributed-task/variable-groups/devopsGetVariableGroups';
+import { createAzureDevopsTimelineAction } from './actions/build/timeline/devopsGetTimeline';
 
 /**
  * A backend module that registers the action into the scaffolder
@@ -44,6 +45,7 @@ export const scaffolderModule = createBackendModule({
           createAzureDevopsCreatePipelineAction({ integrations }),
           createAzureDevopsPermitPipelineAction({ integrations }),
           createAzureDevopsGetVariableGroupsAction({ integrations }),
+          createAzureDevopsTimelineAction({ integrations }),
         );
       },
     });

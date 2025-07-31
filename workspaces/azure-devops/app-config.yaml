@@ -78,4 +78,10 @@ catalog:
       target: ../../examples/scaffolder/getAzureVariableGroups.yaml
       rules:
         - allow: [Template]
+    # Local example scaffolder action
+    - type: file
+      target: ../../examples/scaffolder/getTimelineBuildAzure.yaml
+      rules:
+        - allow: [Template]
+
 
